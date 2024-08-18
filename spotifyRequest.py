@@ -1,18 +1,20 @@
 import requests
 import os
-from dotenv import load_dotenv
+from auth_code import get_auth_header
+import json
 
-load_dotenv()
 
-id=os.getenv('CLIENT_SECRET')
-secret=os.getenv('CLIENT_ID')
+def return_artists(arr):
+                return arr['name']
 
-data={'grant_type':'client_credentials',
-        'client_id':f'{id}',
-        'client_secret':f'{secret}'
-        }
+def get_tracks_and_artists(token,limit):
+        my_playlist= requests.get(f"https://api.spotify.com/v1/playlists/3MCN79RFWj2MKwcPC3K3ZB/tracks?market=GB&limit={limit}",
+                                headers=get_auth_header(token))
+        playlist_dict=json.loads(my_playlist.content)
+        trackArr=[]
 
-my_playlist= requests.get("https://api.spotify.com/v1/playlists/3MCN79RFWj2MKwcPC3K3ZB?market=GB",
-                           headers={'Authorization':'Bearer  BQBnHbQkqcF5cBiVA2qj-_ypCqktriiHxL4FmNDFU1GLWUtdObn9MsRN06EZyQumGj_zy4f8RPQ2JAHo0Oz90H9HthrUalYEwPiXSDts9kfA1n0ngqs'})
-
-print(my_playlist.content)
+        for track in playlist_dict['items']:
+                trackArr.append({"name":track['track']['name'],"artists":list(map(return_artists,track['track']['artists']))})
+        
+        return trackArr
+        
