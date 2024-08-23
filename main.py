@@ -1,4 +1,4 @@
-from spotify_request_tracks import get_tracks_and_artists
+from spotify_requests import get_tracks_and_artists
 from auth_code import get_token
 
 token=get_token()

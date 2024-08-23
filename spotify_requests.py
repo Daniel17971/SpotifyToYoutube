@@ -1,5 +1,4 @@
 import requests
-import os
 from auth_code import get_auth_header
 import json
 
