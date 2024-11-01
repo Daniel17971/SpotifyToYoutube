@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 import json
 load_dotenv()
 
-client_id=os.getenv('CLIENT_ID')
-client_secret=os.getenv('CLIENT_SECRET')
+client_id=os.getenv('SPOTIFY_CLIENT_ID')
+client_secret=os.getenv('SPOTIFY_CLIENT_SECRET')
 
 def get_token():
     auth_string=client_id+ ":" + client_secret
@@ -26,7 +26,4 @@ def get_token():
 
 def get_auth_header(token):
     return {"Authorization": "Bearer " + token}
-
-
-os.environ["ACCESS_TOKEN"]=get_token()
 
