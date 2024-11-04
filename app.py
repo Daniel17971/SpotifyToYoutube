@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from search_array_logic import spotify_to_youtube_ids, update_playlist_with_youtube_ids
 import os
 from flask import Flask, session, abort, redirect, request, url_for
 import requests
@@ -44,18 +44,18 @@ def playlist():
   #redirect if not logged in
   if 'credentials' not in session:
     return redirect('login')
-  #get tracks and artists from spotify
-  tracks_and_artists_arr=get_tracks_and_artists(get_token(),100)
+  #get video Ids from spotify and return youtube equivalent
+  video_ids_arr=spotify_to_youtube_ids(10)
   
   #create a playlist on youtube
-  #
-  #playlist_id=create_playlist("test",session['credentials']['token'])
-  #session['playlist_id']=playlist_id
-  #
-
-  #create search array of ids for youtube from spotify
-  youtube_search_arr=[]
   
+  playlist_id=create_playlist("test",session['credentials']['token'])
+  session['playlist_id']=playlist_id
+  
+
+  #update the new playlist with the video Ids
+
+  update_playlist_with_youtube_ids(video_ids_arr,playlist_id,session['credentials']['token'])
 
   return f"""<div>
   <h3>created a playlist</h3>

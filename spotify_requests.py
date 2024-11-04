@@ -30,4 +30,3 @@ def get_tracks_and_artists(token,limit,page_limit=1):
                 trackArr.append({"name":track['track']['name'],"artists":list(map(return_artists,track['track']['artists']))})
         
         return trackArr
-        

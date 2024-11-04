@@ -13,7 +13,6 @@ def search_videos(key,query_string):
     })
     response_json=json.loads(response.content)
     videoArr=[]
-    print(response_json)
     for item in response_json['items']:
         videoArr.append({'kind':item['id']['kind'],'videoId':item['id']['videoId'],'title':item['snippet']['title']})
     return videoArr
