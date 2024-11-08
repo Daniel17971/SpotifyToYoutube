@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import urllib
 from search_array_logic import spotify_to_youtube_ids, update_playlist_with_youtube_ids
 import os
 from flask import Flask, session, abort, redirect, request, url_for
 import google_auth_oauthlib.flow
 import os
+from spotify_auth import get_access_token, spotify_auth_url
 from youtube_requests import YoutubeRequests
 # This variable specifies the name of a file that contains the OAuth 2.0
 # information for this application, including its client_id and client_secret.
@@ -27,8 +29,12 @@ AUTH_URL='https://accounts.google.com/o/oauth2/auth'
 def index():
   if 'credentials' not in session:
     return redirect('login')
+  if 'spotifyCredentials' not in session:
+    return redirect('spotifyLogin')
   return f"""<div>
   <h3>welcome to spotify youtube sync</h3>
+  <a href="/playlist">create a playlist</a>
+  <a href="/logout">logout</a>
   </div>"""
 
 @app.route('/playlist')
@@ -47,14 +53,22 @@ def playlist():
 
   #update the new playlist with the video Ids
 
-  update_playlist_with_youtube_ids(video_ids_arr,playlist_id,session['credentials']['token'])
+  result=update_playlist_with_youtube_ids(video_ids_arr,playlist_id,session['credentials']['token'])
+
+  if not result:
+    return f"""<div><p>failed to update playlist</p>
+    <a href="/">return to home</a>
+              </div>"""
+
 
   return f"""<div>
   <h3>created a playlist</h3>
+  <a href="/">return to home</a>
   </div>"""
 
 @app.route('/login')
 def login():
+  # google auth flow
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     CLIENT_SECRETS_FILE, scopes=SCOPES)
   flow.redirect_uri = url_for('oauth2callback', _external=True)
@@ -62,7 +76,25 @@ def login():
       access_type='offline',
       prompt='select_account')
   session['state'] = state
+
   return redirect(authorization_url)
+
+@app.route('/spotifyLogin')
+def spotifyLogin():
+  auth_request_params=spotify_auth_url()
+  auth_url = "https://accounts.spotify.com/authorize/?" + urllib.parse.urlencode(auth_request_params)
+  return redirect(auth_url)
+
+@app.route('/spotifycallback')
+def spotifyCallback():
+
+  code = request.args.get('code')
+
+  spotifyCredentials = get_access_token(authorization_code=code)
+
+  session['spotifyCredentials'] = spotifyCredentials
+
+  return redirect(url_for('index'))
 
 @app.route('/oauth2callback')
 def oauth2callback():

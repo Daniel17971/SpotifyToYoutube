@@ -24,6 +24,8 @@ def spotify_to_youtube_ids(limit, page_limit=1):
 
 
 def update_playlist_with_youtube_ids(id_arr, playlist_id, token):
+    if not id_arr:
+        return None
     for video_id in id_arr:
         YT.update_playlist(playlist_id, video_id, token)
     return None

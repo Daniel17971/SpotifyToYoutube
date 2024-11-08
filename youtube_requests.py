@@ -32,6 +32,11 @@ class YoutubeRequests:
                 'title':playlist_name
             }
         },headers={"Authorization": "Bearer " + token})
+
+        if response.status_code!=200:
+            print(f"failed to create playlist, status code: {response.status_code} Response: {response.text}")
+            return f"<p>failed to create playlist</p>"
+
         response_json=json.loads(response.content)
         return response_json['id']
 
@@ -47,6 +52,9 @@ class YoutubeRequests:
                 }
             }
         },headers={"Authorization": "Bearer " + token})
+        if response.status_code!=200:
+            print(f"failed to update playlist, status code: {response.status_code} Response: {response.text}")
+            return f"<p>failed to update playlist</p>"
         response_json=json.loads(response.content)
         return response_json
 
