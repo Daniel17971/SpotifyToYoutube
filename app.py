@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import urllib
-from search_array_logic import spotify_to_youtube_ids, update_playlist_with_youtube_ids
+# from search_array_logic import spotify_to_youtube_ids, update_playlist_with_youtube_ids
 import os
 from flask import Flask, session, abort, redirect, request, url_for
 import google_auth_oauthlib.flow
 import os
 from spotify_auth import get_access_token, spotify_auth_url
+from spotify_requests import SpotifyRequests
 from youtube_requests import YoutubeRequests
 # This variable specifies the name of a file that contains the OAuth 2.0
 # information for this application, including its client_id and client_secret.
@@ -35,6 +36,24 @@ def index():
   <h3>welcome to spotify youtube sync</h3>
   <a href="/playlist">create a playlist</a>
   <a href="/logout">logout</a>
+  </div>"""
+
+@app.route('/playlist/list')
+def list_spotify_playlist():
+  #redirect if not logged in
+  if 'credentials' not in session:
+    return redirect('login')
+  #get user id from spotify
+  SR=SpotifyRequests(session['spotifyCredentials']["access_token"])
+  user_id=SR.get_current_user_id()
+  #get user playlists from spotify
+  playlists=SR.get_users_playlists(user_id)
+  return f"""<div>
+  <h3>playlists</h3>
+  <ul>
+  {"".join([f"<li>{playlist['name']}</li>" for playlist in playlists])}
+  </ul>
+  <a href="/">return to home</a>
   </div>"""
 
 @app.route('/playlist')

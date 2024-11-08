@@ -5,8 +5,8 @@ import json
 
 class SpotifyRequests:
 
-        def __init__(self):
-                self.token=get_token()
+        def __init__(self,token):
+                self.token=token
 
         def return_artists(self,arr):
                         return arr['name']
@@ -37,3 +37,28 @@ class SpotifyRequests:
                 
                 return trackArr
 
+        def get_current_user_id(self):
+                response=requests.get("https://api.spotify.com/v1/me",headers=get_auth_header(self.token))
+                response_json=json.loads(response.content)
+                return response_json["id"]
+
+        def get_users_playlists(self,users_id,limit=20,page_limit=1):
+                page=0
+                items=[]
+                tick=0
+                while True:
+                        if tick==page_limit:
+                                break
+                        my_playlist= requests.get(f"https://api.spotify.com/v1/users/{users_id}/playlists?market=GB&limit={limit}&offset={page*limit}",
+                                                headers=get_auth_header(self.token))
+                        playlist_dict=json.loads(my_playlist.content)
+                        tick+=1
+                        if playlist_dict['items']:
+                                items.extend(playlist_dict['items'])
+                                page+=1
+                        if not playlist_dict['items']:
+                                break
+                playlist_name_and_id=[]
+                for playlist in items:
+                        playlist_name_and_id.append({"name":playlist['name'],"id":playlist['id']})
+                return playlist_name_and_id
