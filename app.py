@@ -2,17 +2,9 @@
 from search_array_logic import spotify_to_youtube_ids, update_playlist_with_youtube_ids
 import os
 from flask import Flask, session, abort, redirect, request, url_for
-import requests
-from pip._vendor import cachecontrol
-from google.oauth2 import id_token
-from spotify_requests import get_tracks_and_artists
-import google.oauth2.credentials
 import google_auth_oauthlib.flow
-import googleapiclient.discovery
 import os
-from dotenv import load_dotenv
-from spotify_auth import get_token
-from youtube_requests import create_playlist
+from youtube_requests import YoutubeRequests
 # This variable specifies the name of a file that contains the OAuth 2.0
 # information for this application, including its client_id and client_secret.
 CLIENT_SECRETS_FILE = "google_secrets.json"
@@ -45,11 +37,11 @@ def playlist():
   if 'credentials' not in session:
     return redirect('login')
   #get video Ids from spotify and return youtube equivalent
-  video_ids_arr=spotify_to_youtube_ids(10)
+  video_ids_arr=spotify_to_youtube_ids(100,10)
   
   #create a playlist on youtube
-  
-  playlist_id=create_playlist("test",session['credentials']['token'])
+  YT=YoutubeRequests()
+  playlist_id=YT.create_playlist("Imperial Log 109",session['credentials']['token'])
   session['playlist_id']=playlist_id
   
 

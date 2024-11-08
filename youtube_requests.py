@@ -3,45 +3,51 @@ import requests
 import json
 
 
+class YoutubeRequests:
 
-def search_videos(key,query_string):
-    response=requests.get(f"https://www.googleapis.com/youtube/v3/search",params={
-        'key': key,
-        'q': query_string,
-        'type': 'video',
-        'part': 'snippet'
-    })
-    response_json=json.loads(response.content)
-    videoArr=[]
-    for item in response_json['items']:
-        videoArr.append({'kind':item['id']['kind'],'videoId':item['id']['videoId'],'title':item['snippet']['title']})
-    return videoArr
+    def __init__(self):
+        self.key=os.getenv("GOOGLE_API_KEY")
+    
+    def search_videos(self,key,query_string):
+        response=requests.get(f"https://www.googleapis.com/youtube/v3/search",params={
+            'key': key,
+            'q': query_string,
+            'type': 'video',
+            'part': 'snippet'
+        })
+        response_json=json.loads(response.content)
+        videoArr=[]
+        if not response.ok:
+            print(f"failed to return results, status code: {response.status_code} Response: {response.text}")
+            return None
+        for item in response_json['items']:
+            videoArr.append({'kind':item['id']['kind'],'videoId':item['id']['videoId'],'title':item['snippet']['title']})
+        return videoArr
 
-def create_playlist(playlist_name, token):
-    response=requests.post(f"https://www.googleapis.com/youtube/v3/playlists",params={
-        'part': 'snippet'
-    },json={
-        'snippet':{
-            'title':playlist_name
-        }
-    },headers={"Authorization": "Bearer " + token})
-    response_json=json.loads(response.content)
-    return response_json['id']
-
-def update_playlist(playlist_id, video_id, token):
-    response=requests.post(f"https://www.googleapis.com/youtube/v3/playlistItems",params={
-        'part': 'snippet'
-    },json={
-        'snippet':{
-            'playlistId':playlist_id,
-            'resourceId':{
-                'kind':'youtube#video',
-                'videoId':video_id
+    def create_playlist(self,playlist_name, token):
+        response=requests.post(f"https://www.googleapis.com/youtube/v3/playlists",params={
+            'part': 'snippet'
+        },json={
+            'snippet':{
+                'title':playlist_name
             }
-        }
-    },headers={"Authorization": "Bearer " + token})
-    response_json=json.loads(response.content)
-    return response_json
+        },headers={"Authorization": "Bearer " + token})
+        response_json=json.loads(response.content)
+        return response_json['id']
 
-def get_youtube_key():
-    return os.getenv("GOOGLE_API_KEY") 
+    def update_playlist(self,playlist_id, video_id, token):
+        response=requests.post(f"https://www.googleapis.com/youtube/v3/playlistItems",params={
+            'part': 'snippet'
+        },json={
+            'snippet':{
+                'playlistId':playlist_id,
+                'resourceId':{
+                    'kind':'youtube#video',
+                    'videoId':video_id
+                }
+            }
+        },headers={"Authorization": "Bearer " + token})
+        response_json=json.loads(response.content)
+        return response_json
+
+
