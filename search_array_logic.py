@@ -11,10 +11,10 @@ class SearchArrayLogic:
         self.SR=SpotifyRequests(self.spotify_token)
         self.YT=YoutubeRequests()
 
-    def spotify_to_youtube_ids(self,limit, page_limit=1):
+    def spotify_to_youtube_ids(self,playlistId,limit, page_limit=1):
         youtube_search_arr=[]
         
-        tracks_and_artists_arr=self.SR.get_tracks_and_artists(limit,page_limit)
+        tracks_and_artists_arr=self.SR.get_tracks_and_artists(playlistId,limit,page_limit)
         
 
         

@@ -11,7 +11,7 @@ class SpotifyRequests:
         def return_artists(self,arr):
                         return arr['name']
 
-        def get_tracks_and_artists(self,limit,page_limit=1):
+        def get_tracks_and_artists(self,playlistId,limit,page_limit=1):
                 page=0
                 items=[]
                 tick=0
@@ -20,7 +20,7 @@ class SpotifyRequests:
                         if tick==page_limit:
                                 break
                         
-                        my_playlist= requests.get(f"https://api.spotify.com/v1/playlists/3MCN79RFWj2MKwcPC3K3ZB/tracks?market=GB&limit={limit}&offset={page*limit}",
+                        my_playlist= requests.get(f"https://api.spotify.com/v1/playlists/{playlistId}/tracks?market=GB&limit={limit}&offset={page*limit}",
                                                 headers=get_auth_header(self.token))
                         playlist_dict=json.loads(my_playlist.content)
                         tick+=1
