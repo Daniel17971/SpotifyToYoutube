@@ -11,7 +11,7 @@ class SpotifyRequests:
         def return_artists(self,arr):
                         return arr['name']
 
-        def get_tracks_and_artists(self,playlistId,limit,page_limit=1):
+        def get_tracks_and_artists(self,playlistId):
                 limit=20
                 items=[]
                 total=json.loads(requests.get(f"https://api.spotify.com/v1/playlists/{playlistId}/tracks?market=GB&limit=1&offset=1",

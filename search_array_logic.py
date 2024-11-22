@@ -14,7 +14,7 @@ class SearchArrayLogic:
     def spotify_to_youtube_ids(self,playlistId,limit, page_limit=1):
         youtube_search_arr=[]
         
-        tracks_and_artists_arr=self.SR.get_tracks_and_artists(playlistId,limit,page_limit)
+        tracks_and_artists_arr=self.SR.get_tracks_and_artists(playlistId)
         
 
         
