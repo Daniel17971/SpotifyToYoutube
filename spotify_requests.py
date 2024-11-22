@@ -12,29 +12,21 @@ class SpotifyRequests:
                         return arr['name']
 
         def get_tracks_and_artists(self,playlistId,limit,page_limit=1):
-                page=0
+                limit=20
                 items=[]
-                tick=0
-
-                while True :
-                        if tick==page_limit:
-                                break
-                        
-                        my_playlist= requests.get(f"https://api.spotify.com/v1/playlists/{playlistId}/tracks?market=GB&limit={limit}&offset={page*limit}",
+                total=json.loads(requests.get(f"https://api.spotify.com/v1/playlists/{playlistId}/tracks?market=GB&limit=1&offset=1",
+                                                headers=get_auth_header(self.token)).content)['total']
+                pages=(total//limit)+1
+                for i in range(pages):
+                        my_playlist= requests.get(f"https://api.spotify.com/v1/playlists/{playlistId}/tracks?market=GB&limit={limit}&offset={(i)*limit}",
                                                 headers=get_auth_header(self.token))
                         playlist_dict=json.loads(my_playlist.content)
-                        tick+=1
 
                         if playlist_dict['items']:
-                                items.extend(playlist_dict['items'])
-                                page+=1
-                                
-                        if not playlist_dict['items']:
-                                break
+                                items.extend(playlist_dict['items'])                           
                 trackArr=[]
                 for track in items:
                         trackArr.append({"name":track['track']['name'],"artists":list(map(self.return_artists,track['track']['artists']))})
-                
                 return trackArr
 
         def get_current_user_id(self):
