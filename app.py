@@ -1,5 +1,5 @@
 import os
-from flask import Flask, session, redirect, url_for
+from flask import Flask, session, redirect, url_for, request
 from models.authentication import google_callback, google_login, spotify_callback, spotify_login
 from models.models import index_service, list_spotify_playlists_service, transfer_playlist_service
 
@@ -23,9 +23,10 @@ def list_spotify_playlist():
   return list_spotify_playlists_service()
 
 
-@app.route('/playlist')
-def playlist():
-  return transfer_playlist_service()
+@app.route('/playlist/<playlistId>')
+def playlist(playlistId):
+  name = request.args.get('name')
+  return transfer_playlist_service(playlistId,name)
 
 # Login and auth with google and spotify
 

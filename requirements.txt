@@ -1,0 +1,8 @@
+flask 
+os
+requests
+json
+uuid
+base64
+dotenv
+google_auth_oauthlib

@@ -1,10 +1,10 @@
-from flask import Flask, session, abort, redirect, request, url_for
+from flask import session, redirect
 
 from search_array_logic import SearchArrayLogic
 from spotify_requests import SpotifyRequests
 from youtube_requests import YoutubeRequests
 
-def index_service():  
+def index_service():
     if 'googleCredentials' not in session:
         return redirect('login')
     if 'spotifyCredentials' not in session:
@@ -13,8 +13,7 @@ def index_service():
     <h3>welcome to spotify youtube sync</h3>
     <p>Welcome, this website will covert one of your spotify playlist into a youtube playlist, please see the options below: </p>
     <ul>
-    <li><a href="/playlist/list">show availiable spotify playlists</a></li>
-    <li><a href="/playlist">transfer a playlist</a></li>
+    <li><a href="/playlist/list">List of playlists available for transfer</a></li>
     <li><a href="/logout">logout</a></li>
     </ul>
     </div>"""
@@ -31,22 +30,21 @@ def list_spotify_playlists_service():
     return f"""<div>
     <h3>playlists</h3>
     <ul>
-    {"".join([f"<li>{playlist['name']}</li>" for playlist in playlists])}
+    {"".join([f"<a href={playlist['id']}?name={'_'.join(playlist['name'].split())} ><li>{playlist['name']}</li></a>" for playlist in playlists])}
     </ul>
     <a href="/">return to home</a>
     </div>"""
 
-def transfer_playlist_service():
+def transfer_playlist_service(playlistId,name):
     #redirect if not logged in
     if 'googleCredentials' not in session:
         return redirect('login')
     conversion=SearchArrayLogic(session['spotifyCredentials']["access_token"])
     #get video Ids from spotify and return youtube equivalent
-    video_ids_arr=conversion.spotify_to_youtube_ids(10,1)
-    
+    video_ids_arr=conversion.spotify_to_youtube_ids(playlistId,10,1)
     #create a playlist on youtube
     YT=YoutubeRequests()
-    playlist_id=YT.create_playlist("Imperial Log 109",session['googleCredentials']['token'])
+    playlist_id=YT.create_playlist(name,session['googleCredentials']['token'])
     session['playlist_id']=playlist_id
     
 
