@@ -34,5 +34,5 @@ class SearchArrayLogic:
             return None
         for video_id in id_arr:
             self.YT.update_playlist(playlist_id, video_id, token)
-        return None
+        return True
 
