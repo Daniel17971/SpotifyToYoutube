@@ -33,25 +33,15 @@ class SearchArrayLogic:
             if youtube_id[0]:
                 youtube_search_arr.append(youtube_id[1]['youtube_id'])
     
-            # Otherwise search youtube for the song. 
+            # Otherwise search youtube for the song and update DB accordingly
             else:
                 query_string=track['name'] + " " + track['artists'][0]
                 result=self.YT.search_videos(self.YT.key,query_string)
                 if not result:
                     return result
                 youtube_search_arr.append(result[0]['videoId'])
+                self.ID.patch_existing_with_youtube_id(spotify_id,{"youtube_id":result[0]['videoId']})
         
-        
-
-
-        for track in tracks_and_artists_arr:
-            query_string=track['name'] + " " + track['artists'][0]
-            result=self.YT.search_videos(self.YT.key,query_string)
-            if not result:
-                return result
-            youtube_search_arr.append(result[0]['videoId'])
-            
-
         return youtube_search_arr
 
 
