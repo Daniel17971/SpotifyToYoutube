@@ -17,7 +17,7 @@ class IdConversionRequests:
             return False
         
         try:
-            return [True,response.json()]
+            return True
         
         except JSONDecodeError:
             print(f"Failed to decode response: {response.text}")
@@ -34,7 +34,7 @@ class IdConversionRequests:
         try:
             data = response.json()
             if data.get("youtube_id"):
-                return True
+                return [True, data]
             else: 
                 return False
         
