@@ -53,12 +53,16 @@ def transfer_playlist_service(playlistId,name):
     result=conversion.update_playlist_with_youtube_ids(video_ids_arr,playlist_id,session['googleCredentials']['token'])
 
     if not result:
-        return f"""<div><p>failed to update playlist</p>
+        return f"""<div>
+        <p>FAILED to update playlist correctly.</p>
+        <p>Part of the playlist may have been created.</p>
+        <a href="https://www.youtube.com/feed/playlists">see youtube playlists</a>
         <a href="/">return to home</a>
                 </div>"""
 
 
     return f"""<div>
     <h3>created a playlist</h3>
+    <a href="https://www.youtube.com/feed/playlists">see youtube playlists</a>
     <a href="/">return to home</a>
     </div>"""
